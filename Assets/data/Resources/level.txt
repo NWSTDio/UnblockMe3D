@@ -1,0 +1,9 @@
+{type:player|axis:horizontal|scale:2|x:0,5|z:2|}
+{type:tile|axis:horizontal|scale:3|x:2,5|z:0,5|}
+{type:tile|axis:horizontal|scale:2|x:2,5|z:-2|}
+{type:tile|axis:horizontal|scale:4|x:-0,5|z:-1|}
+{type:tile|axis:horizontal|scale:3|x:-1,5|z:0,5|}
+{type:tile|axis:horizontal|scale:4|x:-2,5|z:-1|}
+{type:tile|axis:vertical|scale:2|x:2|z:2,5|}
+{type:tile|axis:vertical|scale:2|x:1|z:-0,5|}
+{type:tile|axis:vertical|scale:2|x:1|z:-1,5|}
