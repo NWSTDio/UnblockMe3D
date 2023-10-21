@@ -1,26 +1,24 @@
 using UnityEngine;
 
-public class AudioController : MonoBehaviour
-    {
+public class AudioController : MonoBehaviour {
+
     [SerializeField] private AudioClip _step;
 
     private AudioSource _sound;
 
-    private void OnEnable()
-        {
+    private void OnEnable() {
         Events.OnPlaySoundMoveTile += PlayStepAudio;
         }
-    private void Start()
-        {
+    private void Start() {
         _sound = GetComponent<AudioSource>();
         }
-    private void OnDisable()
-        {
+    private void OnDisable() {
         Events.OnPlaySoundMoveTile -= PlayStepAudio;
         }
-    private void PlayStepAudio()
-        {
-        if(Config.AUDIO)
+
+    private void PlayStepAudio() {
+        if (Config.AUDIO)
             _sound.PlayOneShot(_step);
         }
+
     }

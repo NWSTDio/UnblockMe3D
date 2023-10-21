@@ -2,23 +2,23 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 
-public class Tile : MonoBehaviour
-    {
-    [SerializeField] private LayerMask _objectSelectionMask;// слои с которымы сталкивается обьект
+public class Tile : MonoBehaviour {
 
-    protected Config.AXIS _axis;// ось по которой движется обьект
-    protected Vector3 _destinationPosition;// позиция куда движемся
-    protected float _scale;// размеры по длинне
-    
+    [SerializeField] private LayerMask _objectSelectionMask;
+
+    protected Config.AXIS _axis;
+    protected Vector3 _destinationPosition;
+    protected float _scale;
+
     private readonly float _autoMoveSpeed = 4f, _moveSpeed = 16f;
-    private readonly float _moveDeadZone = .5f;// зона в которой не засчитывается слежение за курсором, чтобы не дрыгался обьект
+    private readonly float _moveDeadZone = .5f;
 
     private Camera _camera;
-    private Config.DIRECTION _moveDirection;//направление движения
-    private Vector3 _prevMouseDownClick, _mouseOffset;// предыдущий клик, и смещкение координат по отношению точки касания
-    private bool _active, _isMoved = false;// активный ли обьект, можно ли обьекту двигатся
-    private float _mouseZCoord;// хранение координаты касания по оси Z
-    private float _distanceRay;// дистанция луча для проверки столкновений
+    private Config.DIRECTION _moveDirection;
+    private Vector3 _prevMouseDownClick, _mouseOffset;
+    private bool _active, _isMoved = false;
+    private float _mouseZCoord;
+    private float _distanceRay;
 
     private Vector3 _startTilePosition;
 
@@ -33,21 +33,16 @@ public class Tile : MonoBehaviour
     protected virtual bool IsEndAutoMove(Vector3 position) => false;
     protected virtual void SetDestinationPosition() { }
 
-    protected virtual void Start()
-        {
+    protected virtual void Start() {
         _camera = Camera.main;
         }
-
-    private void Update()
-        {
+    private void Update() {
         if (_active && _isMoved)
             Move();
         else if (_isMoved)
             AutoMove();
         }
-
-    private void OnMouseDown()
-        {
+    private void OnMouseDown() {
         if (_isMoved)
             return;
 
@@ -61,18 +56,7 @@ public class Tile : MonoBehaviour
 
         _mouseOffset = transform.position - GetMouseWorldPosition();
         }
-
-    public void ChangeScale(float scale)
-        {
-        transform.localScale = new Vector3(transform.localScale.x - .05f, transform.localScale.y, scale - .05f);
-
-        _scale = Mathf.Ceil(scale) / 2;
-
-        _distanceRay = _scale + .05f;
-        }
-
-    private void OnMouseDrag()
-        {
+    private void OnMouseDrag() {
         if (!_active)
             return;
 
@@ -85,8 +69,7 @@ public class Tile : MonoBehaviour
 
         _moveDirection = Config.Direction(_camera.WorldToScreenPoint(_destinationPosition) - _camera.WorldToScreenPoint(transform.position));
         }
-    private void OnMouseUp()
-        {
+    private void OnMouseUp() {
         if (!_active)
             return;
 
@@ -97,8 +80,16 @@ public class Tile : MonoBehaviour
 
         SetDestinationPosition();
         }
-    private void Move()
-        {
+
+    public void ChangeScale(float scale) {
+        transform.localScale = new Vector3(transform.localScale.x - .05f, transform.localScale.y, scale - .05f);
+
+        _scale = Mathf.Ceil(scale) / 2;
+
+        _distanceRay = _scale + .05f;
+        }
+
+    private void Move() {
         Vector3 position = transform.position;
 
         position = TryMove(position, _moveSpeed);
@@ -108,18 +99,15 @@ public class Tile : MonoBehaviour
 
         transform.position = position;
         }
-    private void AutoMove()
-        {
+    private void AutoMove() {
         Vector3 position = transform.position;
 
         position = TryMove(position, _autoMoveSpeed);
 
-        if (IsEndAutoMove(position))
-            {
+        if (IsEndAutoMove(position)) {
             _isMoved = false;
             position = _destinationPosition;
-            if (_startTilePosition != position)
-                {
+            if (_startTilePosition != position) {
                 Events.OnPlaySoundMoveTile.Invoke();
                 Events.OnStepLabelChange.Invoke();
                 }
@@ -127,8 +115,7 @@ public class Tile : MonoBehaviour
 
         transform.position = position;
         }
-    private bool RayCollision(Vector3 pos)
-        {
+    private bool RayCollision(Vector3 pos) {
         Vector3 direction = transform.forward * (IsHorizontalAxis ? HorizontalDirection : VerticalDirection);
 
         pos.y = transform.position.y - transform.localScale.y / 2;
@@ -142,8 +129,7 @@ public class Tile : MonoBehaviour
         return false;
         }
     private bool IsDeadZone(Vector3 position) => (_destinationPosition - position).magnitude < _moveDeadZone;
-    private bool IsNotSwipe()
-        {
+    private bool IsNotSwipe() {
         Vector3 _currentMousePosition = Input.mousePosition;
 
         if (_currentMousePosition == _prevMouseDownClick)
@@ -153,17 +139,16 @@ public class Tile : MonoBehaviour
 
         return false;
         }
-    private Vector3 GetMouseWorldPosition()
-        {
+    private Vector3 GetMouseWorldPosition() {
         Vector3 pos = Input.mousePosition;
 
         return _camera.ScreenToWorldPoint(new Vector3(pos.x, pos.y, _mouseZCoord));
         }
     private Vector3 GetPositionAxis() => FreezePositionAxis(GetMouseWorldPosition() + _mouseOffset);
-    private Vector3 FreezePositionAxis(Vector3 position)
-        {
+    private Vector3 FreezePositionAxis(Vector3 position) {
         position = FreezeAxis(position);
 
-        return new Vector3(position.x, transform.position.y , position.z);
+        return new Vector3(position.x, transform.position.y, position.z);
         }
+
     }
